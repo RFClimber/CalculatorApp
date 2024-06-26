@@ -112,11 +112,13 @@ class ViewController: UIViewController {
     @objc
     private func buttonClicked(_ sender: UIButton) {
         
-        if sender.titleLabel!.text ?? "0" == "AC" {
+        let buttonTitle = sender.titleLabel!.text ?? "0"
+        
+        if buttonTitle == "AC" {
             userInput = []
             numberLabel.text = "0"
             return
-        } else if sender.titleLabel!.text ?? "0" == "=" {
+        } else if buttonTitle == "=" {
             if userInput.count == 0 {
                 return
             } else if operators.contains(userInput.last!) {
@@ -124,8 +126,11 @@ class ViewController: UIViewController {
             }
             numberLabel.text = "\(calculate(expression: userInput.map { String($0) }.joined())!)"
             userInput = [numberLabel.text!]
+            guard operated.count != 1 else {
+                return
+            }
             operated.append(numberLabel.text!)
-        } else if sender.titleLabel!.text ?? "0" == "0" {
+        } else if buttonTitle == "0" {
             if userInput.count == 0 || userInput[0] == "0" {
                 return
             } else if operated.count == 1 {
@@ -134,32 +139,32 @@ class ViewController: UIViewController {
                 numberLabel.text = "0"
                 return
             } else {
-                userInput.append(sender.titleLabel!.text ?? "0")
+                userInput.append(buttonTitle)
                 numberLabel.text = userInput.map { String($0) }.joined()
             }
-        } else if operators.contains(sender.titleLabel!.text ?? "0") {
+        } else if operators.contains(buttonTitle) {
             
             if userInput.count == 0 {
                 return
             } else if operators.contains(userInput.last!) {
                 userInput.removeLast()
-                userInput.append(sender.titleLabel!.text ?? "0")
+                userInput.append(buttonTitle)
                 numberLabel.text = userInput.map { String($0) }.joined()
             } else {
                 operated = []
-                userInput.append(sender.titleLabel!.text ?? "0")
+                userInput.append(buttonTitle)
                 numberLabel.text = userInput.map { String($0) }.joined()
             }
 
             
         } else {
             if operated.count == 0 {
-                userInput.append(sender.titleLabel!.text ?? "0")
+                userInput.append(buttonTitle)
                 numberLabel.text = userInput.map { String($0) }.joined()
             } else {
                 operated = []
                 userInput = []
-                userInput.append(sender.titleLabel!.text ?? "0")
+                userInput.append(buttonTitle)
                 numberLabel.text = userInput.map { String($0) }.joined()
                 return
             }
