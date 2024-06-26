@@ -4,6 +4,7 @@
 //
 //  Created by mac on 6/25/24.
 //
+//  view UI <-> Model: Data / controller: 병합(Action 등)
 
 import UIKit
 import SnapKit
@@ -13,20 +14,13 @@ class ViewController: UIViewController {
     // 계산기 레이블 생성
     let numberLabel = UILabel()
     
-    // 계산기 버튼 생성 위한 배열 생성
-    let (firstLineButtons, secondLineButtons, thirdLineButtons, fourthLineButtons) = (
-        ["7", "8", "9", "+"],
-        ["4", "5", "6", "-"],
-        ["1", "2", "3", "*"],
-        ["AC", "0", "=", "/"])
-    
-    
     // vStackView 생성
     let vStackView = UIStackView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         configureUI()
+        
     }
     
     private func configureUI() {
@@ -38,12 +32,12 @@ class ViewController: UIViewController {
             .forEach { view.addSubview($0) }
         
         // 레이블 속성
-        var num: Int = 0
-        numberLabel.text =  "\(num)"
+        numberLabel.text =  "0"
         numberLabel.backgroundColor = .black
         numberLabel.textColor = .white
         numberLabel.textAlignment = .right
         numberLabel.font = .boldSystemFont(ofSize: 60)
+        
         // 레이블 레이아웃
         numberLabel.snp.makeConstraints {
             $0.top.equalToSuperview().inset(200)
@@ -97,6 +91,7 @@ class ViewController: UIViewController {
             button.frame.size.height = 80
             button.frame.size.width = 80
             button.layer.cornerRadius = 40
+            button.addTarget(self, action: #selector(buttonClicked(_ :)), for: .touchDown)
             
             // 연산 버튼(+, -, *, /, =, AC) 색상 변경 로직
             if Int(title) ==  nil {
@@ -111,5 +106,80 @@ class ViewController: UIViewController {
         return hStackView
     }
     
+    
+    
+    
+    @objc
+    private func buttonClicked(_ sender: UIButton) {
+        
+        if sender.titleLabel!.text ?? "0" == "AC" {
+            userInput = []
+            numberLabel.text = "0"
+            return
+        } else if sender.titleLabel!.text ?? "0" == "=" {
+            if userInput.count == 0 {
+                return
+            } else if operators.contains(userInput.last!) {
+                userInput.removeLast()
+            }
+            numberLabel.text = "\(calculate(expression: userInput.map { String($0) }.joined())!)"
+            userInput = [numberLabel.text!]
+            operated.append(numberLabel.text!)
+        } else if sender.titleLabel!.text ?? "0" == "0" {
+            if userInput.count == 0 || userInput[0] == "0" {
+                return
+            } else if operated.count == 1 {
+                operated = []
+                userInput = []
+                numberLabel.text = "0"
+                return
+            } else {
+                userInput.append(sender.titleLabel!.text ?? "0")
+                numberLabel.text = userInput.map { String($0) }.joined()
+            }
+        } else if operators.contains(sender.titleLabel!.text ?? "0") {
+            
+            if userInput.count == 0 {
+                return
+            } else if operators.contains(userInput.last!) {
+                userInput.removeLast()
+                userInput.append(sender.titleLabel!.text ?? "0")
+                numberLabel.text = userInput.map { String($0) }.joined()
+            } else {
+                operated = []
+                userInput.append(sender.titleLabel!.text ?? "0")
+                numberLabel.text = userInput.map { String($0) }.joined()
+            }
+
+            
+        } else {
+            if operated.count == 0 {
+                userInput.append(sender.titleLabel!.text ?? "0")
+                numberLabel.text = userInput.map { String($0) }.joined()
+            } else {
+                operated = []
+                userInput = []
+                userInput.append(sender.titleLabel!.text ?? "0")
+                numberLabel.text = userInput.map { String($0) }.joined()
+                return
+            }
+            
+        }
+        
+    }
+    func calculate(expression: String) -> Int? {
+        let expression = NSExpression(format: expression)
+        if let result = expression.expressionValue(with: nil, context: nil) as? Int {
+            return result
+        } else {
+            return nil
+        }
+    }
+    
 }
 
+
+//#Preview {
+// let name = ViewController()
+// return name
+//}
