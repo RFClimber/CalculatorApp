@@ -92,7 +92,11 @@ class ViewController: UIViewController {
             button.setTitle(title, for: .normal)
             button.setTitleColor(.white, for: .normal)
             button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 30)
-            button.backgroundColor = UIColor(red: 58/255, green: 58/255, blue: 58/255, alpha: 1.0)
+            if Int(title) ==  nil {
+                button.backgroundColor = UIColor.orange
+            } else {
+                button.backgroundColor = UIColor(red: 58/255, green: 58/255, blue: 58/255, alpha: 1.0)
+            }
             button.frame.size.height = 80
             button.frame.size.width = 80
             button.layer.cornerRadius = 40
