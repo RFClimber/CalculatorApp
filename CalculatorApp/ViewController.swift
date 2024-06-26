@@ -33,6 +33,24 @@ class ViewController: UIViewController {
         
         view.backgroundColor = .black
         
+        // subView 추가
+        [numberLabel, vStackView]
+            .forEach { view.addSubview($0) }
+        
+        // 레이블 속성
+        var num: Int = 0
+        numberLabel.text =  "\(num)"
+        numberLabel.backgroundColor = .black
+        numberLabel.textColor = .white
+        numberLabel.textAlignment = .right
+        numberLabel.font = .boldSystemFont(ofSize: 60)
+        // 레이블 레이아웃
+        numberLabel.snp.makeConstraints {
+            $0.top.equalToSuperview().inset(200)
+            $0.leading.trailing.equalToSuperview().inset(30)
+            $0.height.equalTo(100)
+        }
+        
         // hStackView 생성 및 배열에 추가
         let buttonLines: Array<UIStackView> = [
             makeHorizontalStackView(firstLineButtons),
@@ -43,41 +61,17 @@ class ViewController: UIViewController {
         // hStackView -> vStackView에 추가
         buttonLines.forEach { vStackView.addArrangedSubview($0) }
         
-        // 레이블 속성
-        var num: Int = 0
-        numberLabel.text =  "\(num)"
-        numberLabel.backgroundColor = .black
-        numberLabel.textColor = .white
-        numberLabel.textAlignment = .right
-        numberLabel.font = .boldSystemFont(ofSize: 60)
-        
         // vStackView 속성
         vStackView.axis = .vertical
         vStackView.backgroundColor = .black
         vStackView.spacing = 10
         vStackView.distribution = .fillEqually
-        
-        // view에 추가
-        [numberLabel, vStackView]
-            .forEach { view.addSubview($0) }
-        
-        // 오토레이아웃
-        numberLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(200)
-            $0.leading.trailing.equalToSuperview().inset(30)
-            $0.height.equalTo(100)
-        }
-        
-        buttonLines.forEach { $0.snp.makeConstraints { $0.height.equalTo(80) } }
-        
+        // vStackView 레이아웃
         vStackView.snp.makeConstraints {
             $0.width.equalTo(350)
             $0.top.equalTo(numberLabel.snp.bottom).offset(60)
             $0.centerX.equalToSuperview()
         }
-        
-        
-        
     }
     
     // 버튼 및 hStackView 생성 함수
@@ -90,6 +84,8 @@ class ViewController: UIViewController {
         hStackView.backgroundColor = .black
         hStackView.spacing = 10
         hStackView.distribution = .fillEqually
+        // hStackView 레이아웃
+        hStackView.snp.makeConstraints { $0.height.equalTo(80) }
         
         // 버튼 생성 로직
         for title in views {
@@ -110,6 +106,7 @@ class ViewController: UIViewController {
             }
             // 생성된 버튼 hStackView에 삽입
             hStackView.addArrangedSubview(button)
+            
         }
         return hStackView
     }
