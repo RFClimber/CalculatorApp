@@ -108,70 +108,98 @@ class ViewController: UIViewController {
     
     
     
-    
+    // 버튼 액션
     @objc
     private func buttonClicked(_ sender: UIButton) {
         
+        // 버튼 텍스트 확인
         let buttonTitle = sender.titleLabel!.text ?? "0"
         
+        // AC 버튼을 누른 경우
         if buttonTitle == "AC" {
             userInput = []
             numberLabel.text = "0"
             return
+            
+        // = 연산자 버튼을 누른 경우
         } else if buttonTitle == "=" {
+            // 아무것도 입력받은게 없는 경우
             if userInput.count == 0 {
                 return
+            // 마지막으로 입력받은게 연산자일 경우
             } else if operators.contains(userInput.last!) {
                 userInput.removeLast()
             }
+            // 결과값 출력 및 결과값을 가지고 재연산을 하기 위해 저장
             numberLabel.text = "\(calculate(expression: userInput.map { String($0) }.joined())!)"
             userInput = [numberLabel.text!]
+            
             guard operated.count != 1 else {
                 return
             }
+            
             operated.append(numberLabel.text!)
+            
+        // 0 버튼을 누른 경우
         } else if buttonTitle == "0" {
+            //  0 부터 숫자가 시작하지 않게하기 위한 예외처리
             if userInput.count == 0 || userInput[0] == "0" {
                 return
+            // 연산자 이후의 숫자에도 0으로 시작하지 않도록 예외처리
+            } else if operators.contains(userInput.last!) {
+                return
+            // 결과값이 이미 있는 경우, 초기화
             } else if operated.count == 1 {
                 operated = []
                 userInput = []
                 numberLabel.text = "0"
                 return
+            // 모든 조건을 만족하는 경우, 0을 추가해 레이블에 표시
             } else {
                 userInput.append(buttonTitle)
-                numberLabel.text = userInput.map { String($0) }.joined()
+                displayText()
             }
-        } else if operators.contains(buttonTitle) {
             
+        // 연산자 버튼["+", "-", "*", "/"]을 누른 경우
+        } else if operators.contains(buttonTitle) {
+            // 아무것도 입력 받은 값이 없는 경우
             if userInput.count == 0 {
                 return
+            // 연산자 뒤에 연산자를 또 입력하는 경우
             } else if operators.contains(userInput.last!) {
                 userInput.removeLast()
                 userInput.append(buttonTitle)
-                numberLabel.text = userInput.map { String($0) }.joined()
+                displayText()
+            // 모든 조건을 만족하는 경우
             } else {
                 operated = []
                 userInput.append(buttonTitle)
-                numberLabel.text = userInput.map { String($0) }.joined()
+                displayText()
             }
-
             
+        // 숫자 버튼을 누른 경우
         } else {
+            // 결과값이 없는 경우
             if operated.count == 0 {
                 userInput.append(buttonTitle)
-                numberLabel.text = userInput.map { String($0) }.joined()
+                displayText()
+            // 결과값이 존재하는 경우
             } else {
                 operated = []
                 userInput = []
                 userInput.append(buttonTitle)
-                numberLabel.text = userInput.map { String($0) }.joined()
+                displayText()
                 return
             }
             
         }
         
     }
+    
+    func displayText() {
+        numberLabel.text = userInput.map { String($0) }.joined()
+    }
+    
     func calculate(expression: String) -> Int? {
         let expression = NSExpression(format: expression)
         if let result = expression.expressionValue(with: nil, context: nil) as? Int {

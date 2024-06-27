@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 let (firstLineButtons, secondLineButtons, thirdLineButtons, fourthLineButtons) = (
     ["7", "8", "9", "+"],
     ["4", "5", "6", "-"],
@@ -22,3 +21,5 @@ var inputNumber: String = ""
 var operators = ["+", "-", "*", "/"]
 
 var operated: Array<String> = []
+
+
